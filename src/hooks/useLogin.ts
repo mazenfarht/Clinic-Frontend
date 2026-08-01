@@ -7,7 +7,7 @@ import { notifyError, notifySuccess } from "@/src/lib/notify";
 import { login } from "@/src/services/auth";
 
 export function useLogin() {
-  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"admin" | "patient">("admin");
   const [loading, setLoading] = useState(false);
@@ -20,30 +20,32 @@ export function useLogin() {
       setLoading(true);
       setError("");
 
-      const data = await login(userName, password);
+      const data = await login(email, password);
 
-      localStorage.setItem("clinic_token", data.token);
+      localStorage.setItem("clinic_token", data.tokens.accessToken);
+      localStorage.setItem("clinic_refresh_token", data.tokens.refreshToken);
+
+      document.cookie = `clinic_token=${data.tokens.accessToken}; path=/; max-age=86400`;
 
       notifySuccess("Logged in successfully 🎉");
 
-      document.cookie = `clinic_token=${data.token}; path=/; max-age=86400`;
-
-      router.replace("/dashboard");
+      router.replace("/admin/dashboard");
     } catch (err) {
+      console.error("Login error:", err);
+
       setError("Invalid credentials. Please try again.");
       notifyError("Invalid credentials. Please try again.");
     } finally {
       setLoading(false);
     }
   };
-
   return {
-    userName,
+    email,
     password,
     role,
     loading,
     error,
-    setUserName,
+    setEmail,
     setPassword,
     setRole,
     handleLogin,

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import { DateProvider } from "../context/DateContext";
+import QueryProvider from "../providers/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <DateProvider>{children}</DateProvider>
+        <QueryProvider>
+          <DateProvider>{children}</DateProvider>
+        </QueryProvider>
+
         <ToastContainer />
       </body>
     </html>

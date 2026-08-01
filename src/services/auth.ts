@@ -1,16 +1,14 @@
 import { api } from "../lib/axios";
 
 export const login = async (email: string, password: string) => {
-  try {
-    const res = await api.post("/auth/login", {
-      email,
-      password,
-    });
-    console.log("API RESPONSE:", res.data);
-    return res.data.data;
-  } catch (error) {
-    console.log("The Error Is : ", error);
-  }
+  const res = await api.post("/auth/login", {
+    email,
+    password,
+  });
+
+  console.log("API RESPONSE:", res.data);
+
+  return res.data.data;
 };
 
 export const changePassword = async (
@@ -23,6 +21,7 @@ export const changePassword = async (
     newPassword,
     confirmPassword,
   });
+
   console.log(localStorage.getItem("clinic_token"));
 
   return data;

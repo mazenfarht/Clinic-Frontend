@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQueue } from "./useQueue";
-import { getAllPatients } from "../services/patient";
+import { getPatients } from "../services/patient";
 import { Patient } from "../types/patient";
 
 export function useAnalytics(date: string) {
@@ -23,7 +23,7 @@ export function useAnalytics(date: string) {
 
   useEffect(() => {
     async function loadPatients() {
-      const res = await getAllPatients();
+      const res = await getPatients();
       setPatients(res?.data ?? []);
     }
 

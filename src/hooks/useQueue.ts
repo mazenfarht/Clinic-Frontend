@@ -1,70 +1,52 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getQueue } from "../services/queue";
 import { Patient } from "../types/patient";
 
+type QueueData = {
+  currentPatient: Patient | null;
+  waiting: Patient[];
+  done: Patient[];
+};
+
 export function useQueue(date: string) {
-  const [queue, setQueue] = useState<{
-    currentPatient: Patient | null;
-    waiting: Patient[];
-    done: Patient[];
-  }>({
-    currentPatient: null,
-    waiting: [],
-    done: [],
+  const query = useQuery<QueueData>({
+    queryKey: ["queue", date],
+
+    queryFn: async () => {
+      const data = await getQueue(date);
+
+      return {
+        currentPatient: data?.currentPatient ?? null,
+        waiting: data?.waiting ?? [],
+        done: data?.done ?? [],
+      };
+    },
+
+    enabled: !!date,
+
+    // مؤقتًا أثناء تطوير الـ Backend
+    refetchInterval: 30000,
+
+    // لا تعمل request لما ترجع للتاب
+    refetchOnWindowFocus: false,
   });
 
-  const [loading, setLoading] = useState(true);
+  const queue: QueueData = {
+    currentPatient: query.data?.currentPatient ?? null,
+    waiting: query.data?.waiting ?? [],
+    done: query.data?.done ?? [],
+  };
 
-  const isFirstLoad = useRef(true);
-
-  // 🔥 Fetch queue
-  const fetchQueue = useCallback(
-    async (showLoading = false) => {
-      try {
-        if (showLoading) setLoading(true);
-
-        const data = await getQueue(date);
-        // console.log(data);
-
-        setQueue({
-          currentPatient: data?.currentPatient || null,
-          waiting: data?.waiting || [],
-          done: data?.done || [],
-        });
-      } catch (err) {
-        console.log("Queue error:", err);
-      } finally {
-        if (showLoading) setLoading(false);
-        isFirstLoad.current = false;
-      }
-    },
-    [date]
-  );
-
-  // 🔁 initial + polling
-  useEffect(() => {
-    fetchQueue(true); // أول مرة loading
-
-    const interval = setInterval(() => {
-      fetchQueue(false); // silent refresh
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [fetchQueue]);
-
-  // 📊 full queue
-  const fullQueue = useMemo(() => {
-    return [
-      ...(queue.currentPatient ? [queue.currentPatient] : []),
-      ...queue.waiting,
-      ...queue.done,
-    ];
-  }, [queue]);
+  const fullQueue = [
+    ...(queue.currentPatient ? [queue.currentPatient] : []),
+    ...queue.waiting,
+    ...queue.done,
+  ];
 
   return {
     queue,
-    loading,
-    refetch: () => fetchQueue(false),
+    loading: query.isLoading,
+    refetch: query.refetch,
     fullQueue,
   };
 }

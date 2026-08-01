@@ -4,10 +4,9 @@ import QueueRow from "./QueueRow";
 
 type Props = {
   patients: any[];
-  refetch: () => void;
 };
 
-export default function QueueTable({ patients, refetch }: Props) {
+export default function QueueTable({ patients }: Props) {
   return (
     <div className="bg-white border border-[#E2E8EF] rounded-xl shadow-sm overflow-hidden">
       <div className="p-4 border-b border-[#E2E8EF]">
@@ -31,7 +30,7 @@ export default function QueueTable({ patients, refetch }: Props) {
 
           <tbody>
             {patients.map((patient) => (
-              <QueueRow key={patient.id} patient={patient} refetch={refetch} />
+              <QueueRow key={patient.id} patient={patient} />
             ))}
           </tbody>
         </table>

@@ -90,54 +90,182 @@ The project follows a custom healthcare UI system with:
 ## 📂 Project Structure
 
 ```text
-src/
-│
-├── app/
-│   ├── page.tsx
+src
+├── app
+│   │
+│   ├── page.tsx                     # Landing Page
 │   ├── layout.tsx
-│   ├── book/
+│   ├── globals.css
+│   ├── not-found.tsx
+│   │
+│   ├── book
+│   │   └── page.tsx                 # Booking Form
+│   │
+│   ├── display
+│   │   └── page.tsx                 # Waiting Room Display
+│   │
+│   ├── login
 │   │   └── page.tsx
-│   ├── display/
-│   │   └── page.tsx
-│   ├── login/
-│   │   └── page.tsx
-│   └── dashboard/
-│       ├── page.tsx
-│       ├── queue/
+│   │
+│   └── admin
+│       ├── layout.tsx               # Sidebar + Navbar
+│       ├── page.tsx                 # Redirect → Dashboard
+│       │
+│       ├── dashboard
 │       │   └── page.tsx
-│       └── analytics/
+│       │
+│       ├── patients
+│       │   ├── page.tsx
+│       │   └── [id]
+│       │       └── page.tsx
+│       │
+│       ├── appointments
+│       │   ├── page.tsx
+│       │   ├── create
+│       │   │   └── page.tsx
+│       │   └── [id]
+│       │       └── page.tsx
+│       │
+│       ├── queue
+│       │   └── page.tsx
+│       │
+│       ├── visits
+│       │   ├── page.tsx
+│       │   └── [id]
+│       │       └── page.tsx
+│       │
+│       ├── analytics
+│       │   └── page.tsx
+│       │
+│       ├── settings
+│       │   └── page.tsx
+│       │
+│       └── profile
 │           └── page.tsx
 │
-├── components/
-│   ├── Sidebar.tsx
-│   ├── PatientForm.tsx
-│   └── AnalyticsChart.tsx
+├── components
+│   │
+│   ├── Shared
+│   │   ├── Button.tsx
+│   │   ├── Input.tsx
+│   │   ├── Modal.tsx
+│   │   ├── Pagination.tsx
+│   │   ├── Search.tsx
+│   │   ├── StatusBadge.tsx
+│   │   ├── Loading.tsx
+│   │   ├── ErrorState.tsx
+│   │   └── EmptyState.tsx
+│   │
+│   ├── auth
+│   │
+│   ├── Sidebar
+│   │
+│   ├── Landing-Page
+│   │
+│   ├── book
+│   │
+│   ├── Dashboard
+│   │   ├── OverviewCards.tsx
+│   │   ├── StatisticsCards.tsx
+│   │   ├── QueueOverview.tsx
+│   │   ├── RecentPatients.tsx
+│   │   ├── RecentAppointments.tsx
+│   │   ├── DashboardCharts.tsx
+│   │   └── TodaySummary.tsx
+│   │
+│   ├── Patients
+│   │   ├── PatientTable.tsx
+│   │   ├── PatientRow.tsx
+│   │   ├── PatientForm.tsx
+│   │   ├── PatientDetails.tsx
+│   │   ├── PatientSearch.tsx
+│   │   ├── PatientFilters.tsx
+│   │   └── DeletePatientModal.tsx
+│   │
+│   ├── Appointments
+│   │   ├── AppointmentTable.tsx
+│   │   ├── AppointmentRow.tsx
+│   │   ├── AppointmentForm.tsx
+│   │   ├── AppointmentCalendar.tsx
+│   │   ├── AppointmentStatus.tsx
+│   │   └── CancelAppointmentModal.tsx
+│   │
+│   ├── Queue
+│   │   ├── QueueTable.tsx
+│   │   ├── QueueRow.tsx
+│   │   ├── QueueStatus.tsx
+│   │   ├── QueueActions.tsx
+│   │   ├── WaitingList.tsx
+│   │   └── NowServingCard.tsx
+│   │
+│   ├── Visits
+│   │   ├── VisitTable.tsx
+│   │   ├── VisitForm.tsx
+│   │   ├── VisitDetails.tsx
+│   │   ├── DiagnosisCard.tsx
+│   │   ├── TreatmentCard.tsx
+│   │   ├── PrescriptionCard.tsx
+│   │   └── NotesCard.tsx
+│   │
+│   ├── Analytics
+│   │   ├── PatientsChart.tsx
+│   │   ├── VisitsChart.tsx
+│   │   ├── QueueChart.tsx
+│   │   ├── AppointmentsChart.tsx
+│   │   └── SummaryCards.tsx
+│   │
+│   └── ClinicSettings
+│       ├── ClinicInfoForm.tsx
+│       ├── WorkingHours.tsx
+│       ├── WorkingDay.tsx
+│       ├── MaxPatientsInput.tsx
+│       └── SaveSettingsButton.tsx
 │
-├── hooks/
+├── context
+│   ├── AuthContext.tsx
+│   ├── DateContext.tsx
+│   └── QueueContext.tsx
+│
+├── hooks
+│   ├── useAuth.ts
+│   ├── usePatients.ts
+│   ├── useAppointments.ts
 │   ├── useQueue.ts
-│   └── useAuth.ts
+│   ├── useVisits.ts
+│   ├── useDashboard.ts
+│   ├── useAnalytics.ts
+│   └── useClinicSettings.ts
 │
-├── context/
-│   └── DateContext.tsx
-│
-├── services/
+├── services
 │   ├── auth.ts
+│   ├── patients.ts
+│   ├── appointments.ts
 │   ├── queue.ts
-│   ├── patient.ts
-│   ├── book.ts
-│   └── slots.ts
+│   ├── visits.ts
+│   ├── dashboard.ts
+│   ├── analytics.ts
+│   └── clinicSettings.ts
 │
-├── types/
-│   ├── patient.ts
-│   ├── queue.ts
-│   ├── auth.ts
-│   └── slots.ts
-│
-├── lib/
+├── lib
 │   ├── axios.ts
-│   └── notify.ts
+│   ├── auth.ts
+│   └── utils.ts
 │
-└── middleware.ts
+├── types
+│   ├── auth.ts
+│   ├── patient.ts
+│   ├── appointment.ts
+│   ├── queue.ts
+│   ├── visit.ts
+│   ├── dashboard.ts
+│   ├── analytics.ts
+│   └── clinic.ts
+│
+├── middleware.ts
+│
+└── constants
+    ├── routes.ts
+    └── roles.ts
 ```
 
 ---

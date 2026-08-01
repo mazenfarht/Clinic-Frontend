@@ -8,12 +8,12 @@ import { useLogin } from "@/src/hooks/useLogin";
 
 export default function LoginForm() {
   const {
-    userName,
+    email,
     password,
     role,
     loading,
     error,
-    setUserName,
+    setEmail,
     setPassword,
     setRole,
     handleLogin,
@@ -33,8 +33,8 @@ export default function LoginForm() {
         <LoginInput
           label="Username"
           placeholder="Enter username"
-          value={userName}
-          onChange={setUserName}
+          value={email}
+          onChange={setEmail}
         />
 
         <div>

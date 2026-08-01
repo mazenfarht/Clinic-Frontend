@@ -128,6 +128,16 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
                 Analytics
               </Link>
             </li>
+            <li>
+              <Link
+                href="/admin/patients"
+                onClick={closeSidebar}
+                className={linkClass("/admin/patients")}
+              >
+                <BarChart3 size={20} />
+                Patients
+              </Link>
+            </li>
           </ul>
         </nav>
 
