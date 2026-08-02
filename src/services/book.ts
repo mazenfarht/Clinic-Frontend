@@ -2,7 +2,7 @@ import { api } from "../lib/axios";
 
 export const boking = async (name: string) => {
   try {
-    const res = await api.post("/book", {
+    const res = await api.post("/appointments", {
       name,
     });
     console.log("API RESPONSE:", res.data);

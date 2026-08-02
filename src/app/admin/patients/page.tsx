@@ -17,11 +17,14 @@ import PatientForm from "../../components/Patients/PatientForm";
 import DeletePatientModal from "../../components/Patients/DeletePatientModal";
 import PatientTable from "../../components/Patients/PatientTable";
 
+import { useRouter } from "next/navigation";
+
 type Gender = "ALL" | "MALE" | "FEMALE" | "OTHER";
 
 export default function PatientsPage() {
   const queryClient = useQueryClient();
 
+  const router = useRouter();
   // -----------------------------
   // Filters
   // -----------------------------
@@ -163,7 +166,7 @@ export default function PatientsPage() {
   };
 
   const handleViewPatient = (patient: Patient) => {
-    window.location.href = `/admin/patients/${patient.id}`;
+    router.push(`/admin/patients/${patient.id}`);
   };
 
   const handleFormSubmit = (data: any) => {
