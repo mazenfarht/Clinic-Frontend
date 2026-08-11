@@ -1,5 +1,3 @@
-// src/components/Appointments/AppointmentTable.tsx
-
 import { CalendarDays, Loader2 } from "lucide-react";
 import AppointmentRow from "./AppointmentRow";
 import type { Appointment, PaginationMeta } from "@/src/types/appointment";
@@ -10,8 +8,12 @@ interface AppointmentTableProps {
   isError: boolean;
   meta?: PaginationMeta;
   actionLoading: string | null;
+
+  onConfirm: (id: string) => void;
   onCancel: (id: string) => void;
   onComplete: (id: string) => void;
+  onNoShow: (id: string) => void;
+
   onPageChange: (page: number) => void;
 }
 
@@ -23,8 +25,12 @@ export default function AppointmentTable({
   isError,
   meta,
   actionLoading,
+
+  onConfirm,
   onCancel,
   onComplete,
+  onNoShow,
+
   onPageChange,
 }: AppointmentTableProps) {
   return (
@@ -43,6 +49,7 @@ export default function AppointmentTable({
               ))}
             </tr>
           </thead>
+
           <tbody>
             {isLoading && (
               <tr>
@@ -82,8 +89,10 @@ export default function AppointmentTable({
                 <AppointmentRow
                   key={appt.id}
                   appointment={appt}
+                  onConfirm={onConfirm}
                   onCancel={onCancel}
                   onComplete={onComplete}
+                  onNoShow={onNoShow}
                   actionLoading={actionLoading}
                 />
               ))}
@@ -98,6 +107,7 @@ export default function AppointmentTable({
             Showing {(meta.page - 1) * meta.limit + 1}–
             {Math.min(meta.page * meta.limit, meta.total)} of {meta.total}
           </p>
+
           <div className="flex items-center gap-1">
             <button
               onClick={() => onPageChange(meta.page - 1)}
@@ -106,6 +116,7 @@ export default function AppointmentTable({
             >
               Previous
             </button>
+
             {Array.from({ length: meta.totalPages }, (_, i) => i + 1)
               .filter(
                 (p) =>
@@ -114,8 +125,10 @@ export default function AppointmentTable({
                   Math.abs(p - meta.page) <= 1
               )
               .reduce<(number | "…")[]>((acc, p, i, arr) => {
-                if (i > 0 && (p as number) - (arr[i - 1] as number) > 1)
+                if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) {
                   acc.push("…");
+                }
+
                 acc.push(p);
                 return acc;
               }, [])
@@ -142,6 +155,7 @@ export default function AppointmentTable({
                   </button>
                 )
               )}
+
             <button
               onClick={() => onPageChange(meta.page + 1)}
               disabled={!meta.hasNextPage}

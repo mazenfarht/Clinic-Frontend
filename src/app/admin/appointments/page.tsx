@@ -20,8 +20,11 @@ export default function AppointmentsPage() {
     actionLoading,
     actionError,
     dismissActionError,
+
+    handleConfirm,
     handleCancel,
     handleComplete,
+    handleNoShow,
   } = useAppointments();
 
   return (
@@ -32,7 +35,9 @@ export default function AppointmentsPage() {
         {actionError && (
           <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">
             <span className="shrink-0 mt-0.5">⚠</span>
+
             <span className="flex-1">{actionError}</span>
+
             <button
               onClick={dismissActionError}
               className="text-red-400 hover:text-red-600 shrink-0 text-xs"
@@ -55,8 +60,10 @@ export default function AppointmentsPage() {
           isError={isError}
           meta={meta}
           actionLoading={actionLoading}
+          onConfirm={handleConfirm}
           onCancel={handleCancel}
           onComplete={handleComplete}
+          onNoShow={handleNoShow}
           onPageChange={setPage}
         />
       </div>

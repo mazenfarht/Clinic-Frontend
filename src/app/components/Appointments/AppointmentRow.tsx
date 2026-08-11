@@ -1,11 +1,12 @@
 "use client";
 
-// src/components/Appointments/AppointmentRow.tsx
-
 import { useRouter } from "next/navigation";
-import { Eye, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Eye, CheckCircle2, XCircle, UserX, Loader2 } from "lucide-react";
+
 import AppointmentStatus from "./AppointmentStatus";
+
 import type { Appointment } from "@/src/types/appointment";
+
 import {
   parseDate,
   parseTime,
@@ -15,22 +16,35 @@ import {
 
 interface AppointmentRowProps {
   appointment: Appointment;
-  onCancel: (id: string) => void;
+  onConfirm: (id: string) => void;
   onComplete: (id: string) => void;
+  onNoShow: (id: string) => void;
+  onCancel: (id: string) => void;
   actionLoading: string | null;
 }
 
 export default function AppointmentRow({
   appointment: appt,
-  onCancel,
+  onConfirm,
   onComplete,
+  onNoShow,
+  onCancel,
   actionLoading,
 }: AppointmentRowProps) {
   const router = useRouter();
+
   const date = formatDateShort(parseDate(appt.appointmentDate));
   const time = formatTime12(parseTime(appt.appointmentTime));
+
   const isActing = actionLoading === appt.id;
-  const isScheduled = appt.status === "SCHEDULED";
+
+  const canConfirm = appt.status === "SCHEDULED";
+
+  const canComplete = appt.status === "CONFIRMED";
+
+  const canNoShow = appt.status === "CONFIRMED";
+
+  const canCancel = appt.status === "SCHEDULED" || appt.status === "CONFIRMED";
 
   return (
     <tr className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors">
@@ -39,6 +53,7 @@ export default function AppointmentRow({
         <p className="text-sm font-semibold text-slate-800">
           {appt.patient.fullName}
         </p>
+
         <p className="text-xs text-slate-400 mt-0.5">{appt.patient.phone}</p>
       </td>
 
@@ -74,7 +89,7 @@ export default function AppointmentRow({
       {/* Actions */}
       <td className="px-4 py-3">
         <div className="flex items-center gap-1">
-          {/* View → navigates to /appointments/:id */}
+          {/* View */}
           <button
             onClick={() => router.push(`/admin/appointments/${appt.id}`)}
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 hover:text-blue-600 transition-colors"
@@ -83,12 +98,28 @@ export default function AppointmentRow({
             <Eye size={15} />
           </button>
 
+          {/* Confirm */}
+          {canConfirm && (
+            <button
+              onClick={() => onConfirm(appt.id)}
+              disabled={isActing}
+              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 transition-colors disabled:opacity-40"
+              title="Confirm appointment"
+            >
+              {isActing ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <CheckCircle2 size={15} />
+              )}
+            </button>
+          )}
+
           {/* Complete */}
-          {isScheduled && (
+          {canComplete && (
             <button
               onClick={() => onComplete(appt.id)}
               disabled={isActing}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 transition-colors disabled:opacity-40"
+              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors disabled:opacity-40"
               title="Mark as completed"
             >
               {isActing ? (
@@ -99,8 +130,24 @@ export default function AppointmentRow({
             </button>
           )}
 
+          {/* No Show */}
+          {canNoShow && (
+            <button
+              onClick={() => onNoShow(appt.id)}
+              disabled={isActing}
+              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-orange-50 text-slate-400 hover:text-orange-600 transition-colors disabled:opacity-40"
+              title="Mark as no-show"
+            >
+              {isActing ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <UserX size={15} />
+              )}
+            </button>
+          )}
+
           {/* Cancel */}
-          {isScheduled && (
+          {canCancel && (
             <button
               onClick={() => onCancel(appt.id)}
               disabled={isActing}

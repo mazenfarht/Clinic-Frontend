@@ -1,7 +1,11 @@
 // src/types/appointment.ts
 
-export type AppointmentStatus = "SCHEDULED" | "COMPLETED" | "CANCELLED";
-
+export type AppointmentStatus =
+  | "SCHEDULED"
+  | "CONFIRMED"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "NO_SHOW";
 // ── Shared sub-types (match actual API response shapes) ───────────────────
 
 export interface AppointmentPatient {

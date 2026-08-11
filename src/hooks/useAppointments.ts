@@ -4,11 +4,15 @@
 
 import { useState, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
   getAppointments,
   cancelAppointment,
+  confirmAppointment,
   completeAppointment,
+  noShowAppointment,
 } from "@/src/services/appointment";
+
 import type { AppointmentFiltersParams } from "@/src/types/appointment";
 
 const QUERY_KEY = "appointments";
@@ -25,17 +29,27 @@ export function useAppointments() {
 
   const updateFilter = useCallback(
     (patch: Partial<AppointmentFiltersParams>) => {
-      setFilters((prev) => ({ ...prev, ...patch, page: 1 }));
+      setFilters((prev) => ({
+        ...prev,
+        ...patch,
+        page: 1,
+      }));
     },
     []
   );
 
   const resetFilters = useCallback(() => {
-    setFilters({ page: 1, limit: 10 });
+    setFilters({
+      page: 1,
+      limit: 10,
+    });
   }, []);
 
   const setPage = useCallback((page: number) => {
-    setFilters((prev) => ({ ...prev, page }));
+    setFilters((prev) => ({
+      ...prev,
+      page,
+    }));
   }, []);
 
   // ── List query ────────────────────────────────────────────────────────────
@@ -58,6 +72,7 @@ export function useAppointments() {
   // ── Status actions ────────────────────────────────────────────────────────
 
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+
   const [actionError, setActionError] = useState<string | null>(null);
 
   function extractMessage(err: unknown): string {
@@ -65,22 +80,43 @@ export function useAppointments() {
       err &&
       typeof err === "object" &&
       "response" in err &&
-      (err as { response?: { data?: { message?: string } } }).response?.data
-        ?.message
+      (
+        err as {
+          response?: {
+            data?: {
+              message?: string;
+            };
+          };
+        }
+      ).response?.data?.message
     ) {
-      return (err as { response: { data: { message: string } } }).response.data
-        .message;
+      return (
+        err as {
+          response: {
+            data: {
+              message: string;
+            };
+          };
+        }
+      ).response.data.message;
     }
+
     return "An unexpected error occurred.";
   }
 
-  const handleCancel = useCallback(
+  // ── Confirm ───────────────────────────────────────────────────────────────
+
+  const handleConfirm = useCallback(
     async (id: string) => {
       setActionLoading(id);
       setActionError(null);
+
       try {
-        await cancelAppointment(id);
-        await queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+        await confirmAppointment(id);
+
+        await queryClient.invalidateQueries({
+          queryKey: [QUERY_KEY],
+        });
       } catch (err) {
         setActionError(extractMessage(err));
       } finally {
@@ -90,13 +126,63 @@ export function useAppointments() {
     [queryClient]
   );
 
+  // ── Cancel ────────────────────────────────────────────────────────────────
+
+  const handleCancel = useCallback(
+    async (id: string) => {
+      setActionLoading(id);
+      setActionError(null);
+
+      try {
+        await cancelAppointment(id);
+
+        await queryClient.invalidateQueries({
+          queryKey: [QUERY_KEY],
+        });
+      } catch (err) {
+        setActionError(extractMessage(err));
+      } finally {
+        setActionLoading(null);
+      }
+    },
+    [queryClient]
+  );
+
+  // ── Complete ──────────────────────────────────────────────────────────────
+
   const handleComplete = useCallback(
     async (id: string) => {
       setActionLoading(id);
       setActionError(null);
+
       try {
         await completeAppointment(id);
-        await queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+
+        await queryClient.invalidateQueries({
+          queryKey: [QUERY_KEY],
+        });
+      } catch (err) {
+        setActionError(extractMessage(err));
+      } finally {
+        setActionLoading(null);
+      }
+    },
+    [queryClient]
+  );
+
+  // ── No Show ───────────────────────────────────────────────────────────────
+
+  const handleNoShow = useCallback(
+    async (id: string) => {
+      setActionLoading(id);
+      setActionError(null);
+
+      try {
+        await noShowAppointment(id);
+
+        await queryClient.invalidateQueries({
+          queryKey: [QUERY_KEY],
+        });
       } catch (err) {
         setActionError(extractMessage(err));
       } finally {
@@ -127,7 +213,10 @@ export function useAppointments() {
     actionLoading,
     actionError,
     dismissActionError,
+
+    handleConfirm,
     handleCancel,
     handleComplete,
+    handleNoShow,
   };
 }
