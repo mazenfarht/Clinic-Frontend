@@ -25,6 +25,9 @@ export function useLogin() {
       localStorage.setItem("clinic_token", data.tokens.accessToken);
       localStorage.setItem("clinic_refresh_token", data.tokens.refreshToken);
 
+      // Store logged-in user and role
+      localStorage.setItem("clinic_user", JSON.stringify(data.user));
+
       document.cookie = `clinic_token=${data.tokens.accessToken}; path=/; max-age=86400`;
 
       notifySuccess("Logged in successfully 🎉");
