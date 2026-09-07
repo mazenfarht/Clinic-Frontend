@@ -1,4 +1,30 @@
+import type { AppointmentStatus } from "./appointment";
+
 export type Gender = "MALE" | "FEMALE" | "OTHER";
+
+export type UserReference = {
+  id: string;
+  fullName: string;
+};
+
+export type PatientAppointment = {
+  id: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  status: AppointmentStatus;
+  notes: string | null;
+};
+
+export type PatientVisit = {
+  id: string;
+  visitDate: string;
+  chiefComplaint: string | null;
+  diagnosis: string | null;
+  treatment?: string | null;
+  prescription?: string | null;
+  notes?: string | null;
+  createdAt?: string;
+};
 
 export type Patient = {
   id: string;
@@ -14,78 +40,11 @@ export type Patient = {
   createdAt: string;
   updatedAt: string;
 
-  createdBy?: {
-    id: string;
-    fullName: string;
-  };
+  createdBy?: UserReference;
+  updatedBy?: UserReference;
 
-  updatedBy?: {
-    id: string;
-    fullName: string;
-  };
-
-  visits?: unknown[];
-  appointments?: unknown[];
-};
-
-export type PatientAppointment = {
-  id: string;
-  clinicId: string;
-  patientId: string;
-
-  visitId: string | null;
-
-  appointmentDate: string;
-  appointmentTime: string;
-
-  status: "SCHEDULED" | "COMPLETED" | "CANCELLED";
-
-  notes: string | null;
-
-  patient?: {
-    id: string;
-    fullName: string;
-    phone: string;
-    mrn: string;
-  };
-
-  createdBy?: {
-    id: string;
-    fullName: string;
-  };
-
-  updatedBy?: {
-    id: string;
-    fullName: string;
-  };
-
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type PatientVisit = {
-  id: string;
-
-  visitDate: string;
-
-  chiefComplaint: string | null;
-  diagnosis: string | null;
-  treatment: string | null;
-  prescription: string | null;
-  notes: string | null;
-
-  patientId: string;
-
-  appointmentId: string | null;
-  queueEntryId: string | null;
-
-  createdBy?: {
-    id: string;
-    fullName: string;
-  };
-
-  updatedAt?: string;
-  createdAt?: string;
+  appointments?: PatientAppointment[];
+  visits?: PatientVisit[];
 };
 
 export type PatientDetails = Patient & {
@@ -129,7 +88,23 @@ export type PaginationMeta = {
   hasPrevPage: boolean;
 };
 
-export type PatientsResponse = {
-  data: Patient[];
+export type ApiResponse<T> = {
+  success: boolean;
+  message: string;
+  data: T;
+};
+
+export type PaginatedApiResponse<T> = {
+  success: boolean;
+  message: string;
+  data: T[];
   meta: PaginationMeta;
 };
+
+export type PatientsResponse = PaginatedApiResponse<Patient>;
+
+export type PatientDetailsResponse = ApiResponse<PatientDetails>;
+
+export type PatientAppointmentResponse = ApiResponse<PatientAppointment>;
+
+export type PatientVisitResponse = ApiResponse<PatientVisit>;

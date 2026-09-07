@@ -1,54 +1,54 @@
-// hooks/useAnalytics.ts
+// // hooks/useAnalytics.ts
 
-import { useEffect, useMemo, useState } from "react";
-import { useQueue } from "./useQueue";
-import { getPatients } from "../services/patient";
-import { Patient } from "../types/patient";
+// import { useEffect, useMemo, useState } from "react";
+// import { useQueue } from "./useQueue";
+// import { getPatients } from "../services/patient";
+// import { Patient } from "../types/patient";
 
-export function useAnalytics(date: string) {
-  const { fullQueue } = useQueue(date);
-  const [patients, setPatients] = useState<Patient[]>([]);
+// export function useAnalytics(date: string) {
+//   const { fullQueue } = useQueue(date);
+//   const [patients, setPatients] = useState<Patient[]>([]);
 
-  const totalPatientsToday = fullQueue.length;
+//   const totalPatientsToday = fullQueue.length;
 
-  const totalServedToday = useMemo(
-    () => fullQueue.filter((p) => p.status === "done").length,
-    [fullQueue]
-  );
+//   const totalServedToday = useMemo(
+//     () => fullQueue.filter((p) => p.status === "done").length,
+//     [fullQueue]
+//   );
 
-  const waitingPatients = useMemo(
-    () => fullQueue.filter((p) => p.status === "waiting").length,
-    [fullQueue]
-  );
+//   const waitingPatients = useMemo(
+//     () => fullQueue.filter((p) => p.status === "waiting").length,
+//     [fullQueue]
+//   );
 
-  useEffect(() => {
-    async function loadPatients() {
-      const res = await getPatients();
-      setPatients(res?.data ?? []);
-    }
+//   useEffect(() => {
+//     async function loadPatients() {
+//       const res = await getPatients();
+//       setPatients(res?.data ?? []);
+//     }
 
-    loadPatients();
-  }, []);
+//     loadPatients();
+//   }, []);
 
-  const groupedPatients = useMemo(() => {
-    return patients.reduce((acc: Record<string, number>, patient) => {
-      acc[patient.appointmentDate] = (acc[patient.appointmentDate] || 0) + 1;
+//   const groupedPatients = useMemo(() => {
+//     return patients.reduce((acc: Record<string, number>, patient) => {
+//       acc[patient.appointmentDate] = (acc[patient.appointmentDate] || 0) + 1;
 
-      return acc;
-    }, {});
-  }, [patients]);
+//       return acc;
+//     }, {});
+//   }, [patients]);
 
-  const chartData = useMemo(() => {
-    return Object.entries(groupedPatients).map(([date, count]) => ({
-      date,
-      count,
-    }));
-  }, [groupedPatients]);
-  return {
-    totalPatientsToday,
-    totalServedToday,
-    waitingPatients,
-    chartData,
-    patients,
-  };
-}
+//   const chartData = useMemo(() => {
+//     return Object.entries(groupedPatients).map(([date, count]) => ({
+//       date,
+//       count,
+//     }));
+//   }, [groupedPatients]);
+//   return {
+//     totalPatientsToday,
+//     totalServedToday,
+//     waitingPatients,
+//     chartData,
+//     patients,
+//   };
+// }

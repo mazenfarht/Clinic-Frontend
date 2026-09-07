@@ -1,51 +1,91 @@
-import { api } from "../lib/axios";
+import api from "../lib/axios";
+import type {
+  QueueEntry,
+  QueueStatusSummary,
+  QueueStatistics,
+  CheckInPayload,
+  ReserveQueuePayload,
+  QueueListParams,
+  PaginatedQueue,
+  ResetQueueResult,
+} from "../types/queue";
 
-// ─── Get Queue (date-based) ─────────────────────────────
-export const getQueue = async (date: string) => {
-  try {
-    const res = await api.get(`/queue?date=${date}`);
-    return res.data.data;
-  } catch (err) {
-    console.log("API ERROR:", err);
-    throw err;
-  }
-};
+// ── Queries ───────────────────────────────────────────────────────
 
-// ─── Book Patient (UPDATED) ─────────────────────────────
-// Backend supports ONLY: name + optional appointmentDate
-export const bookPatient = async (data: {
-  name: string;
-  appointmentDate?: string;
-}) => {
-  try {
-    const res = await api.post("/book", data);
-    return res.data.data;
-  } catch (error: any) {
-    console.log("Booking Error:", error?.response?.data || error.message);
-    throw error;
-  }
-};
+export async function fetchQueue(
+  params?: QueueListParams
+): Promise<PaginatedQueue> {
+  const { data } = await api.get("/queue", { params });
+  return {
+    data: data.data,
+    meta: data.meta,
+  };
+}
 
-// ─── Next Patient (date-based queue) ────────────────────
-export const nextPatient = async (date: string) => {
-  const response = await api.post("/next", { date });
-  return response.data;
-};
+export async function fetchQueueStatus(): Promise<QueueStatusSummary> {
+  const { data } = await api.get("/queue/status");
+  return data.data;
+}
 
-// ─── Reset Queue ─────────────────────────────────────────
-export const resetQueue = async () => {
-  const response = await api.post("/reset");
-  return response.data;
-};
+export async function fetchQueueStatistics(
+  date?: string
+): Promise<QueueStatistics> {
+  const { data } = await api.get("/queue/statistics", {
+    params: date ? { date } : undefined,
+  });
+  return data.data;
+}
 
-// ─── Delete Patient ──────────────────────────────────────
-export const deletePatient = async (id: string) => {
-  const response = await api.delete(`/patient/${id}`);
-  return response.data;
-};
+export async function fetchQueueEntry(id: string): Promise<QueueEntry> {
+  const { data } = await api.get(`/queue/${id}`);
+  return data.data;
+}
 
-// ─── Check-in (optional if backend supports it) ─────────
-export const checkInPatient = async (id: string) => {
-  const response = await api.post(`/checkin/${id}`);
-  return response.data;
-};
+// ── Mutations ─────────────────────────────────────────────────────
+
+export async function checkIn(payload: CheckInPayload): Promise<QueueEntry> {
+  const { data } = await api.post("/queue/check-in", payload);
+  return data.data;
+}
+
+export async function reserveQueueSlot(
+  payload: ReserveQueuePayload
+): Promise<QueueEntry> {
+  const { data } = await api.post("/queue/reserve", payload);
+  return data.data;
+}
+
+export async function callNext(): Promise<QueueEntry> {
+  const { data } = await api.post("/queue/call-next");
+  return data.data;
+}
+
+export async function resetQueue(): Promise<ResetQueueResult> {
+  const { data } = await api.post("/queue/reset");
+  return data.data;
+}
+
+export async function serveEntry(id: string): Promise<QueueEntry> {
+  const { data } = await api.patch(`/queue/${id}/serve`);
+  return data.data;
+}
+
+export async function skipEntry(id: string): Promise<QueueEntry> {
+  const { data } = await api.patch(`/queue/${id}/skip`);
+  return data.data;
+}
+
+export async function recallEntry(id: string): Promise<QueueEntry> {
+  const { data } = await api.patch(`/queue/${id}/recall`);
+  return data.data;
+}
+
+export async function cancelEntry(id: string): Promise<QueueEntry> {
+  const { data } = await api.patch(`/queue/${id}/cancel`);
+  return data.data;
+}
+
+export async function startEntry(id: string): Promise<QueueEntry> {
+  const { data } = await api.patch(`/queue/${id}/start`);
+  return data.data;
+}

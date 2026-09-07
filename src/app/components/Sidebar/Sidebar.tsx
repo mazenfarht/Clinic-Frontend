@@ -3,8 +3,10 @@
 import Link from "next/link";
 import {
   LayoutDashboard,
-  Users,
+  CalendarDays,
+  ListOrdered,
   BarChart3,
+  Users,
   LogOut,
   Stethoscope,
   X,
@@ -63,7 +65,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
           lg:translate-x-0 lg:fixed
         `}
       >
-        {/* Close Button (Mobile Only) */}
+        {/* Close Button */}
         <div className="flex justify-end p-4 lg:hidden">
           <button onClick={closeSidebar}>
             <X size={24} />
@@ -96,45 +98,62 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
         {/* Navigation */}
         <nav className="flex-1 p-4">
           <ul className="space-y-2">
+            {/* Dashboard */}
             <li>
               <Link
-                href="/dashboard"
+                href="/admin/dashboard"
                 onClick={closeSidebar}
-                className={linkClass("/dashboard")}
+                className={linkClass("/admin/dashboard")}
               >
                 <LayoutDashboard size={20} />
-                Overview
+                Dashboard
               </Link>
             </li>
 
+            {/* Appointments */}
             <li>
               <Link
-                href="/dashboard/queue"
+                href="/admin/appointments"
                 onClick={closeSidebar}
-                className={linkClass("/dashboard/queue")}
+                className={linkClass("/admin/appointments")}
               >
-                <Users size={20} />
+                <CalendarDays size={20} />
+                Appointments
+              </Link>
+            </li>
+
+            {/* Queue */}
+            <li>
+              <Link
+                href="/admin/queue"
+                onClick={closeSidebar}
+                className={linkClass("/admin/queue")}
+              >
+                <ListOrdered size={20} />
                 Queue
               </Link>
             </li>
 
+            {/* Analytics */}
             <li>
               <Link
-                href="/dashboard/analytics"
+                href="/admin/analytics"
                 onClick={closeSidebar}
-                className={linkClass("/dashboard/analytics")}
+                className={linkClass("/admin/analytics")}
               >
                 <BarChart3 size={20} />
                 Analytics
               </Link>
             </li>
+
+            {/* Patients */}
             <li>
               <Link
                 href="/admin/patients"
                 onClick={closeSidebar}
                 className={linkClass("/admin/patients")}
               >
-                <BarChart3 size={20} />
+                <Users size={20} />
                 Patients
               </Link>
             </li>
