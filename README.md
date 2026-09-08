@@ -145,16 +145,6 @@ src
 │
 ├── components
 │   │
-│   ├── Shared
-│   │   ├── Button.tsx
-│   │   ├── Input.tsx
-│   │   ├── Modal.tsx
-│   │   ├── Pagination.tsx
-│   │   ├── Search.tsx
-│   │   ├── StatusBadge.tsx
-│   │   ├── Loading.tsx
-│   │   ├── ErrorState.tsx
-│   │   └── EmptyState.tsx
 │   │
 │   ├── auth
 │   │
@@ -222,9 +212,8 @@ src
 │       └── SaveSettingsButton.tsx
 │
 ├── context
-│   ├── AuthContext.tsx
 │   ├── DateContext.tsx
-│   └── QueueContext.tsx
+│
 │
 ├── hooks
 │   ├── useAuth.ts

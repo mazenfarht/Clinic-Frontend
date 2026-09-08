@@ -10,6 +10,7 @@ import {
   LogOut,
   Stethoscope,
   X,
+  Settings,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -155,6 +156,17 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
               >
                 <Users size={20} />
                 Patients
+              </Link>
+            </li>
+            {/* Settings */}
+            <li>
+              <Link
+                href="/admin/settings"
+                onClick={closeSidebar}
+                className={linkClass("/admin/settings")}
+              >
+                <Settings size={20} />
+                Settings
               </Link>
             </li>
           </ul>
