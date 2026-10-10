@@ -6,8 +6,6 @@ export const login = async (email: string, password: string) => {
     password,
   });
 
-  console.log("API RESPONSE:", res.data);
-
   return res.data.data;
 };
 
@@ -21,8 +19,6 @@ export const changePassword = async (
     newPassword,
     confirmPassword,
   });
-
-  console.log(localStorage.getItem("clinic_token"));
 
   return data;
 };

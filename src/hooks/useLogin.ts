@@ -1,10 +1,11 @@
 "use client";
 
+import { isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 import { notifyError, notifySuccess } from "@/src/lib/notify";
 import { login } from "@/src/services/auth";
+import { saveSession } from "@/src/lib/authStorage";
 
 export function useLogin() {
   const [email, setEmail] = useState("");
@@ -22,26 +23,26 @@ export function useLogin() {
 
       const data = await login(email, password);
 
-      localStorage.setItem("clinic_token", data.tokens.accessToken);
-      localStorage.setItem("clinic_refresh_token", data.tokens.refreshToken);
-
-      // Store logged-in user and role
-      localStorage.setItem("clinic_user", JSON.stringify(data.user));
-
-      document.cookie = `clinic_token=${data.tokens.accessToken}; path=/; max-age=86400`;
+      // Tokens + user in localStorage, and the cookie used by middleware.ts
+      saveSession(data.tokens, data.user);
 
       notifySuccess("Logged in successfully 🎉");
 
       router.replace("/admin/dashboard");
     } catch (err) {
-      console.error("Login error:", err);
+      // Show the backend's real reason (wrong password, deactivated account,
+      // validation error...) and a generic one only when the server is unreachable.
+      const message =
+        (isAxiosError(err) && err.response?.data?.message) ||
+        "Unable to sign in. Please check your connection and try again.";
 
-      setError("Invalid credentials. Please try again.");
-      notifyError("Invalid credentials. Please try again.");
+      setError(message);
+      notifyError(message);
     } finally {
       setLoading(false);
     }
   };
+
   return {
     email,
     password,

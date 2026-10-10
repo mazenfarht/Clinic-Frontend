@@ -13,7 +13,7 @@ import {
   Settings,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-
+import { clearSession } from "@/src/lib/authStorage";
 interface SidebarProps {
   open: boolean;
   setOpen: (value: boolean) => void;
@@ -26,14 +26,11 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
   const closeSidebar = () => setOpen(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("clinic_token");
-
-    document.cookie =
-      "clinic_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    clearSession();
 
     closeSidebar();
 
-    router.replace("/admin/login");
+    router.replace("/login");
   };
 
   const linkClass = (href: string) =>
